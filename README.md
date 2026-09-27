@@ -227,6 +227,7 @@ Se incluye una herramienta CLI para simular ráfagas, estados del Circuit Breake
 
 | Proyecto | Tecnologías | Descripción |
 | :--- | :--- | :--- |
+| **[subscription-billing-dotnet](https://github.com/jimmyrom1/subscription-billing-dotnet)** | .NET 9, C#, EF Core, SQLite | Motor de facturación recurrente con prorrateo exacto al segundo, ciclo de dunning de 3 intentos e idempotencia HTTP. |
 | **[live-auction-engine](https://github.com/jimmyrom1/live-auction-engine)** | Node.js 24, WebSockets, SQLite WAL, React 19 | Subastas en tiempo real con resolución atómica de carreras concurrentes y anti-sniping. |
 | **[double-entry-ledger](https://github.com/jimmyrom1/double-entry-ledger)** | FastAPI, Asyncpg, PostgreSQL, React | Motor contable de partida doble inmutable con invariante de balance cero diferido en base de datos. |
 | **[subscriptions-api](https://github.com/jimmyrom1/subscriptions-api)** | Java 21, Spring Boot 4, ShedLock, PostgreSQL | API fintech de suscripciones recurrentes con prorrateo exacto y tareas periódicas distribuidas. |
