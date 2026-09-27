@@ -234,4 +234,5 @@ Se incluye una herramienta CLI para simular ráfagas, estados del Circuit Breake
 | **[mini-invoice-generator](https://github.com/jimmyrom1/mini-invoice-generator)** | Flask, PostgreSQL, fpdf2, React | Generador de facturas con cálculo exacto de impuestos y renderizado PDF profesional. |
 | **[lol-tracker](https://github.com/jimmyrom1/lol-tracker)** | Kotlin, Jetpack Compose, Room v3, WorkManager | App Android nativa offline-first con sincronización en segundo plano. |
 | **[lol-tracker-api](https://github.com/jimmyrom1/lol-tracker-api)** | Node.js, Fastify, TypeScript | Proxy backend seguro con rate limiting y caché intermedia para la API de Riot Games. |
+| **[anime-tracker](https://github.com/jimmyrom1/anime-tracker)** | ASP.NET Core 10, EF Core, PostgreSQL, Angular 22 | Lista de anime y manga al estilo MyAnimeList con catálogo de AniList, +1 concurrente sin pérdidas y estadísticas. |
 
