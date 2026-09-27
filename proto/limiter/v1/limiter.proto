@@ -1,0 +1,126 @@
+syntax = "proto3";
+
+package limiter.v1;
+
+option go_package = "github.com/jimmyrom1/rate-limiter-grpc/proto/limiter/v1;limiterv1";
+
+// RateLimiterService defines high-throughput rate limiting and circuit breaking.
+service RateLimiterService {
+  // Check tests whether a request is allowed by rate limiting and circuit breaker policy.
+  rpc Check(CheckRequest) returns (CheckResponse);
+
+  // RecordResult records success or failure for a circuit breaker protected dependency.
+  rpc RecordResult(RecordResultRequest) returns (RecordResultResponse);
+
+  // GetBreakerStatus retrieves the current state of a circuit breaker.
+  rpc GetBreakerStatus(BreakerStatusRequest) returns (BreakerStatusResponse);
+
+  // Reset clears limiter state or circuit breaker counters for a key.
+  rpc Reset(ResetRequest) returns (ResetResponse);
+
+  // GetMetrics returns aggregated counters and performance metrics.
+  rpc GetMetrics(MetricsRequest) returns (MetricsResponse);
+}
+
+enum Algorithm {
+  ALGORITHM_UNSPECIFIED = 0;
+  ALGORITHM_TOKEN_BUCKET = 1;
+  ALGORITHM_SLIDING_WINDOW = 2;
+  ALGORITHM_LEAKY_BUCKET = 3;
+}
+
+enum BreakerState {
+  BREAKER_STATE_UNSPECIFIED = 0;
+  BREAKER_STATE_CLOSED = 1;
+  BREAKER_STATE_OPEN = 2;
+  BREAKER_STATE_HALF_OPEN = 3;
+}
+
+message CheckRequest {
+  // Unique identification of client, IP, API key or user (e.g. "client-192.168.1.10", "tenant:acme").
+  string key = 1;
+
+  // Selected rate limiting algorithm (defaults to Token Bucket if unspecified).
+  Algorithm algorithm = 2;
+
+  // Maximum burst / capacity (e.g. 100 tokens or 100 requests).
+  int64 capacity = 3;
+
+  // Refill rate or threshold (e.g. 20 tokens/sec or 20 req/window).
+  double rate = 4;
+
+  // Window duration in milliseconds (used for sliding window, e.g. 1000 for 1s).
+  int64 window_ms = 5;
+
+  // Cost of the operation (defaults to 1 if <= 0).
+  int64 cost = 6;
+
+  // Optional target service name to check circuit breaker status alongside rate limiting.
+  string service_name = 7;
+}
+
+message CheckResponse {
+  // Whether the request is permitted.
+  bool allowed = 1;
+
+  // Human-readable reason if denied ("RATE_LIMIT_EXCEEDED", "CIRCUIT_BREAKER_OPEN").
+  string reason = 2;
+
+  // Remaining tokens/capacity in current cycle.
+  double remaining = 3;
+
+  // Approximate duration in milliseconds until next token or window reset.
+  int64 retry_after_ms = 4;
+
+  // Current circuit breaker state if service_name was provided.
+  BreakerState breaker_state = 5;
+}
+
+message RecordResultRequest {
+  string service_name = 1;
+  bool success = 2;
+  int64 consecutive_failures_threshold = 3; // e.g. 5
+  int64 recovery_timeout_ms = 4;            // e.g. 10000ms
+  int64 probe_success_threshold = 5;        // e.g. 3
+}
+
+message RecordResultResponse {
+  string service_name = 1;
+  BreakerState previous_state = 2;
+  BreakerState current_state = 3;
+  int64 failure_count = 4;
+  int64 success_count = 5;
+}
+
+message BreakerStatusRequest {
+  string service_name = 1;
+}
+
+message BreakerStatusResponse {
+  string service_name = 1;
+  BreakerState state = 2;
+  int64 failure_count = 3;
+  int64 success_count = 4;
+  int64 last_state_change_unix_ms = 5;
+}
+
+message ResetRequest {
+  string key = 1;
+  string service_name = 2;
+}
+
+message ResetResponse {
+  bool limiter_reset = 1;
+  bool breaker_reset = 2;
+}
+
+message MetricsRequest {}
+
+message MetricsResponse {
+  int64 total_requests = 1;
+  int64 allowed_requests = 2;
+  int64 denied_requests = 3;
+  int64 active_limiters = 4;
+  int64 active_circuit_breakers = 5;
+  int64 breaker_trips = 6;
+}

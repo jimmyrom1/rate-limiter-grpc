@@ -1,0 +1,22 @@
+services:
+  rate-limiter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rate-limiter-grpc
+    ports:
+      - "50051:50051"
+      - "9090:9090"
+    environment:
+      - GRPC_PORT=50051
+      - METRICS_PORT=9090
+      - DEFAULT_CAPACITY=100
+      - DEFAULT_RATE=20.0
+      - DEFAULT_WINDOW_MS=1000
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9090/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s

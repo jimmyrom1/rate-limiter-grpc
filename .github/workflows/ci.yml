@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test-and-build:
+    name: Test with Race Detector & Smoke Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: true
+
+      - name: Install Protoc & Plugins
+        run: |
+          sudo apt-get update && sudo apt-get install -y protobuf-compiler
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
+      - name: Verify Protobuf Generation
+        run: |
+          protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative proto/limiter/v1/limiter.proto
+          git diff --exit-code proto/limiter/v1/limiter.pb.go proto/limiter/v1/limiter_grpc.pb.go
+
+      - name: Run Tests with Race Detector
+        run: |
+          go test -race -v -coverprofile=coverage.out ./...
+
+      - name: Run Benchmarks
+        run: |
+          go test -bench . -benchmem ./internal/service
+
+      - name: Build Binaries
+        run: |
+          go build -o bin/server ./cmd/server
+          go build -o bin/client ./cmd/client
+
+      - name: Smoke Test (Server + Client Live Demo + Metrics)
+        run: |
+          ./bin/server &
+          SERVER_PID=$!
+          sleep 2
+
+          # Verify HTTP Healthz
+          curl -f http://localhost:9090/healthz
+
+          # Run gRPC Client Live Demo
+          ./bin/client -mode demo
+
+          # Verify HTTP Metrics
+          curl -f http://localhost:9090/metrics
+
+          kill $SERVER_PID
