@@ -227,10 +227,11 @@ Se incluye una herramienta CLI para simular ráfagas, estados del Circuit Breake
 
 | Proyecto | Tecnologías | Descripción |
 | :--- | :--- | :--- |
+| **[live-auction-engine](https://github.com/jimmyrom1/live-auction-engine)** | Node.js 24, WebSockets, SQLite WAL, React 19 | Subastas en tiempo real con resolución atómica de carreras concurrentes y anti-sniping. |
 | **[double-entry-ledger](https://github.com/jimmyrom1/double-entry-ledger)** | FastAPI, Asyncpg, PostgreSQL, React | Motor contable de partida doble inmutable con invariante de balance cero diferido en base de datos. |
-| **[rate-limiter-grpc](https://github.com/jimmyrom1/rate-limiter-grpc)** | Go, gRPC, Protobuf, Concurrencia | Limitador de tráfico (~90 ns/op) con Token Bucket, Sliding Window y Circuit Breaker. |
 | **[subscriptions-api](https://github.com/jimmyrom1/subscriptions-api)** | Java 21, Spring Boot 4, ShedLock, PostgreSQL | API fintech de suscripciones recurrentes con prorrateo exacto y tareas periódicas distribuidas. |
 | **[room-booking](https://github.com/jimmyrom1/room-booking)** | Flask, PostgreSQL, React | Reserva de salas con exclusión de solapes mediante PostgreSQL `EXCLUDE USING gist`. |
 | **[mini-invoice-generator](https://github.com/jimmyrom1/mini-invoice-generator)** | Flask, PostgreSQL, fpdf2, React | Generador de facturas con cálculo exacto de impuestos y renderizado PDF profesional. |
 | **[lol-tracker](https://github.com/jimmyrom1/lol-tracker)** | Kotlin, Jetpack Compose, Room v3, WorkManager | App Android nativa offline-first con sincronización en segundo plano. |
 | **[lol-tracker-api](https://github.com/jimmyrom1/lol-tracker-api)** | Node.js, Fastify, TypeScript | Proxy backend seguro con rate limiting y caché intermedia para la API de Riot Games. |
+
